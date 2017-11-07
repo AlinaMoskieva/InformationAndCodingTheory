@@ -8,18 +8,10 @@ class Probability
 
   def symbols_probabilities
      probabilities
-
-    {
-      "a1" => 0.36,
-      "a2" => 0.18,
-      "a3" => 0.18,
-      "a4" => 0.12,
-      "a5" => 0.09,
-      "a6" => 0.07
-    }
   end
 
   def text_entropy
+    puts "The text entropy is #{entropy}"
     entropy
   end
 

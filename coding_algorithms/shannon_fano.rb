@@ -1,18 +1,19 @@
 require_relative "probability"
 
 class ShannonFano
-  attr_accessor :probabilities, :entropy, :code_tree
+  attr_accessor :probabilities, :code_tree
 
   def initialize(file_name)
+    puts "Shannon Fano"
     probability = Probability.new(file_name)
     @probabilities = hash_formation(probability.symbols_probabilities)
-    puts probabilities
-    @entropy = probability.text_entropy
     @code_tree = copy_keys_and_set_default
+    probability.text_entropy
   end
 
   def tree
     code_tree_formation(probabilities)
+    puts "Code tree is #{code_tree}"
     code_tree
   end
 
@@ -57,4 +58,4 @@ class ShannonFano
   end
 end
 
-ShannonFano.new("ex.txt").tree
+# ShannonFano.new("ex.txt").tree
