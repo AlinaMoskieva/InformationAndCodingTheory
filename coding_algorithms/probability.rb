@@ -7,7 +7,7 @@ class Probability
   end
 
   def symbols_probabilities
-     probabilities
+    probabilities
   end
 
   def text_entropy
