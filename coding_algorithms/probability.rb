@@ -11,7 +11,6 @@ class Probability
   end
 
   def text_entropy
-    puts "The text entropy is #{entropy}"
     entropy
   end
 

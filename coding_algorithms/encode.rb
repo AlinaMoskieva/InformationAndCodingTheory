@@ -33,10 +33,8 @@ class Encode
   end
 end
 
-encode = Encode.new("../entropy/souls.txt")
-encode.encode("ShannonFano")
-
-encode = Encode.new("../entropy/souls.txt")
-encode.encode("Haffman")
-
-
+# encode = Encode.new("../entropy/souls.txt")
+# encode.encode("ShannonFano")
+#
+# encode = Encode.new("../entropy/souls.txt")
+# encode.encode("Haffman")
