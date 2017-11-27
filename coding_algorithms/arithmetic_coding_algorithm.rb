@@ -3,6 +3,7 @@ require_relative "encode"
 
 class ArithmeticCodingAlgorithm
   attr_accessor :probabilities, :file_name
+  RESULT_TITLE = "Bits divided by the number of symbols "
 
   def initialize(file_name)
     @file_name = file_name
@@ -15,19 +16,36 @@ class ArithmeticCodingAlgorithm
   def encode_text
     segments = {}
     range = [0, 1]
+    symbols_amount = 0
     File.open(file_name, "r") do |f|
       f.each_char do |symbol|
         segment = order_segments(range)[symbol]
         range = [segment[:right], segment[:left]]
+        symbols_amount = symbols_amount + 1
       end
     end
-    puts "Answer is #{range.inspect}"
+    code = rand * (range.last - range.first) + range.first
+    answer(determine_range(range), symbols_amount, code)
   end
   
   private
+  
+  def answer(range, symbols_amount, code)
+    puts "Range is #{range.inspect}"
+    puts "Code is #{code}"
+    puts "Symbol amount is #{symbols_amount}"
+    
+    write_answer(symbols_amount, code)
+  end
+  
+  def write_answer(symbols_amount, code)
+    out = File.new("arithmetic_coding_algorithm.bin", "w")
+    out.write(code)
+    puts "#{RESULT_TITLE} #{out.size / symbols_amount.to_f }"
+  end
 
   def order_segments(range)
-    right, left = range
+    right, left = determine_range(range)
     length = left - right
     segments = {}
     
@@ -36,9 +54,19 @@ class ArithmeticCodingAlgorithm
       segments[key] = { right: right, left: left }
       right = left
     end
-    puts segments.inspect
     
     segments
+  end
+  
+  def determine_range(range)
+    right, left = range
+
+    return range unless (left * 10 ).to_i == (right * 10 ).to_i
+    
+    similar = (left * 10 ).to_i
+    left = left * 10 - similar
+    right = right * 10 - similar
+    determine_range [right, left]
   end
 
   def previous_results(probability)
@@ -48,4 +76,4 @@ class ArithmeticCodingAlgorithm
   end
 end
 
-ArithmeticCodingAlgorithm.new("ex.txt").encode_text
+ArithmeticCodingAlgorithm.new("../entropy/souls.txt").encode_text
