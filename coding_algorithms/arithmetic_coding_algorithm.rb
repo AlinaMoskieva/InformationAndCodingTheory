@@ -24,13 +24,14 @@ class ArithmeticCodingAlgorithm
         symbols_amount = symbols_amount + 1
       end
     end
-    code = rand * (range.last - range.first) + range.first
-    answer(determine_range(range), symbols_amount, code)
+    
+    answer(determine_range(range), symbols_amount)
   end
   
   private
   
-  def answer(range, symbols_amount, code)
+  def answer(range, symbols_amount)
+    code = rand * (range.last - range.first) + range.first
     puts "Range is #{range.inspect}"
     puts "Code is #{code}"
     puts "Symbol amount is #{symbols_amount}"
@@ -41,7 +42,7 @@ class ArithmeticCodingAlgorithm
   def write_answer(symbols_amount, code)
     out = File.new("arithmetic_coding_algorithm.bin", "w")
     out.write(code)
-    puts "#{RESULT_TITLE} #{out.size / symbols_amount.to_f }"
+    # puts "#{RESULT_TITLE} #{(out.size / symbols_amount.to_f).round(8) }"
   end
 
   def order_segments(range)
