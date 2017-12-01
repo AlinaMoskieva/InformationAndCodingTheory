@@ -1,16 +1,24 @@
 class Calculation
+  attr_accessor :text_name, :probabilities
+  
   def initialize(text_name)
-    alphabet = alphabet_formation(text_name)
-    probabilities = calculate_propability(alphabet)
+    @text_name = text_name
+    @probabilities = calculate_propability
     entropy = calculate_entropy(probabilities)
-    
-    combinations = calculate_combination_amount(text_name, alphabet)
+  end
+
+  def conditional_entropy
+    combinations = calculate_combination_amount(text_name)
     combinations_probability = calculate_combination_probability(combinations)
     conditional_entropy = calculate_conditional_entropy(combinations_probability, probabilities, combinations)
     [combinations_probability, conditional_entropy]
   end
 
   private
+  
+  def alphabet
+    @alphabet ||= alphabet_formation(text_name)
+  end
 
   def alphabet_formation(text_name)
     alphabet = {}
@@ -24,9 +32,10 @@ class Calculation
     alphabet
   end
 
-  def calculate_propability(alphabet)
+  def calculate_propability
     probabilities = {}
-    alphabet.map { |k, v| probabilities[k] = v.to_f / symbols_amount(alphabet) }
+    
+    alphabet.map { |k, v| probabilities[k] = v.to_f / symbols_amount }
     probabilities
   end
 
@@ -36,7 +45,7 @@ class Calculation
     result
   end
 
-  def calculate_combination_amount(text_name, alphabet)
+  def calculate_combination_amount(text_name)
     combinations = {}
     prev = File.open(text_name).first[0]
     File.open(text_name).each_char.drop(1).each do |c|
@@ -66,11 +75,11 @@ class Calculation
     @combinations ||= combinations.values.reduce(:+)
   end
 
-  def symbols_amount(alphabet)
-    @alphabet ||= alphabet.values.reduce(:+)
+  def symbols_amount
+    @symbols_amount ||= alphabet.values.reduce(:+)
   end
 
-  def print_result(file_name, alphabet, entropy, combinations, conditional_entropy)
+  def print_result(file_name, entropy, combinations, conditional_entropy)
     puts "File name is #{file_name}"
     puts "Alphabet is #{alphabet.keys}"
     puts "Alphabet power is #{alphabet.keys.count}"
@@ -82,4 +91,4 @@ class Calculation
   end
 end
 
-Calculation.new("ex.txt")
+# Calculation.new("ex.txt").conditional_entropy
