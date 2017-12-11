@@ -11,6 +11,7 @@ class ArithmeticCodingAlgorithm
     @calculations = Calculation.new(file_name).conditional_entropy
     @similars = "0."
     puts_conditional_entropy
+    puts probabilities
   end
 
   def encode_text
@@ -30,7 +31,7 @@ class ArithmeticCodingAlgorithm
   def answer(range, symbols_amount)
     code = code_formition(range)
     puts "Range is #{range.inspect}"
-    # puts "Code is #{code}"
+    puts "Code is #{code}"
     puts "Symbols amount is #{symbols_amount}"
     puts "Code length is #{code.length}"
 

@@ -3,15 +3,20 @@ class Calculation
     alphabet = alphabet_formation(text_name)
     probabilities = calculate_propability(alphabet)
     entropy = calculate_entropy(probabilities)
+    
     combinations = calculate_combination_amount(text_name, alphabet)
-    combinations_probability = calculate_combination_probability(combinations)
-    conditional_entropy = calculate_conditional_entropy(combinations_probability, probabilities, combinations)
+    @combinations_probability = calculate_combination_probability(combinations)
+    @conditional_entropy = calculate_conditional_entropy(combinations_probability, probabilities, combinations)
 
     second_combination = calculate_second_combination_amount(text_name, alphabet)
     second_combinations_probability = calculate_second_probability(second_combination, combination_amount(combinations) - 1 )
     second_conditional_entropy = calculate_second_conditional_entropy(second_combinations_probability, combinations_probability)
 
     print_result(text_name, alphabet, entropy, combinations, conditional_entropy, second_conditional_entropy)
+  end
+  
+  def conditional
+    [@combinations_probability, @conditional_entropy]
   end
 
   private
@@ -120,4 +125,4 @@ class Calculation
   end
 end
 
-Calculation.new("souls.txt")
+# Calculation.new("souls.txt")
