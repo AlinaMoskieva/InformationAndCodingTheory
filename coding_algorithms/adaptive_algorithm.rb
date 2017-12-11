@@ -1,38 +1,28 @@
 class AdaptiveAlgorithm
-  attr_accessor :input, :alphabet, :weight, :probabilities, :file_name, :similars
+  attr_accessor :weight, :probabilities, :file_name, :similars
   RESULT_TITLE = "Bits divided by the number of symbols ".freeze
+  OUTPUT_FILE_NAME = "adaptive_coding_algorithm.bin".freeze
 
   def initialize(file_name)
     @file_name = file_name
-    @input = File.open(file_name, "r")
-    @alphabet = determine_alphabet.freeze
     @weight = init_weight
     @probabilities = recalculate_probabilities
     @similars = "0."
-    @symbols_amount = 0
   end
 
   def encode_text
-    segment = {}
-    range = [0, 1]
+    segment, range = [{}, [0, 1]]
 
-    File.open(file_name, "r") do |f|
-      f.each_char do |symbol|
-        segment = order_segments(range)[symbol]
-        range = [segment[:right], segment[:left]]
-        update_weight(symbol)
-        recalculate_probabilities
-        increment_symbols_amount
-      end
+    file.each_char do |symbol|
+      segment = order_segments(range)[symbol]
+      range = [segment[:right], segment[:left]]
+      update_weight(symbol)
+      recalculate_probabilities
     end
     write_answer(range)
   end
 
   private
-
-  def increment_symbols_amount
-    @symbols_amount += 1
-  end
 
   def write_answer(range)
     code = code_formition(range)
@@ -42,9 +32,9 @@ class AdaptiveAlgorithm
   end
 
   def puts_answer_in_a_file(range, code)
-    out = File.new("adaptive_coding_algorithm.bin", "w")
+    out = File.new(OUTPUT_FILE_NAME, "w")
     out.write(binary_code(code))
-    puts "#{RESULT_TITLE} #{(out.size / @symbols_amount.to_f).round(8)}"
+    puts "#{RESULT_TITLE} #{(out.size / symbols_amount).round(8)}"
   end
 
   def code_formition(range)
@@ -58,8 +48,7 @@ class AdaptiveAlgorithm
 
   def order_segments(range)
     right, left = determine_range(range)
-    length = left - right
-    segments = {}
+    length, segments = [left - right, {}]
 
     probabilities.each do |key, value|
       left = right + length * value
@@ -92,13 +81,25 @@ class AdaptiveAlgorithm
   end
 
   def determine_alphabet
-    input.read.split(//).uniq
+    file.split(//).uniq
   end
 
   def init_weight
     weight = {}
     alphabet.each { |symbol| weight[symbol] = 1 }
     weight
+  end
+
+  def file
+    @file ||= File.open(file_name, "r").read
+  end
+
+  def symbols_amount
+    file.length.to_f
+  end
+
+  def alphabet
+    @alphabet ||= determine_alphabet.freeze
   end
 
   def binary_code(code)
