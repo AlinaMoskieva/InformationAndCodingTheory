@@ -2,31 +2,24 @@ require_relative "probability"
 require_relative "encode"
 
 class ArithmeticCodingAlgorithm
-  attr_accessor :probabilities, :file_name, :similars
+  attr_accessor :file_name, :similars
   RESULT_TITLE = "Bits divided by the number of symbols ".freeze
 
   def initialize(file_name)
     @file_name = file_name
-    probability = Probability.new(file_name)
-    @probabilities = probability.symbols_probabilities
-    previous_results(probability)
     @similars = "0."
-    puts "Arithmetic coding algorithm"
+    previous_results(probability)
   end
 
   def encode_text
-    segments = {}
-    range = [0, 1]
-    symbols_amount = 0
-    File.open(file_name, "r") do |f|
-      f.each_char do |symbol|
-        segment = order_segments(range)[symbol]
-        range = [segment[:right], segment[:left]]
-        symbols_amount += 1
-      end
+    segments, range = [{}, [0, 1]]
+
+    file.each_char do |symbol|
+      segment = order_segments(range)[symbol]
+      range = [segment[:right], segment[:left]]
     end
 
-    answer(determine_range(range), symbols_amount)
+    answer(determine_range(range), file.length)
   end
 
   private
@@ -34,7 +27,7 @@ class ArithmeticCodingAlgorithm
   def answer(range, symbols_amount)
     code = code_formition(range)
     puts "Range is #{range.inspect}"
-    # puts "Code is #{code}"
+    puts "Code is #{code}"
     puts "Symbols amount is #{symbols_amount}"
     puts "Code length is #{code.length}"
 
@@ -54,8 +47,7 @@ class ArithmeticCodingAlgorithm
 
   def order_segments(range)
     right, left = determine_range(range)
-    length = left - right
-    segments = {}
+    length, segments = [left - right, {}]
 
     probabilities.each do |key, value|
       left = right + length * value
@@ -84,6 +76,18 @@ class ArithmeticCodingAlgorithm
     puts "Entropy is #{probability.entropy}"
     Encode.new(file_name).encode("ShannonFano")
     Encode.new(file_name).encode("Haffman")
+  end
+
+  def probabilities
+    @probabilities ||= probability.symbols_probabilities
+  end
+
+  def probability
+    @probability ||= Probability.new(file_name)
+  end
+
+  def file
+    @file ||= File.open(file_name, "r").read
   end
 
   def binary_code(code)
